@@ -1,6 +1,6 @@
 from functions import *
 
-function = open("test_case1 .txt").readlines()
+function = open("test_cases/test_case1.txt").readlines()
 
 size = int(function[0])
 minTerms = []
@@ -56,10 +56,16 @@ implicants[0] = groups
 
 #storing all implicants in a 3D-list structure, with iterative regrouping of the previous set of implicants
 for i in range(1, size-1):
-      implicants[i] = regroup(implicants[i-1], size)
-
-implicants = [x for x in implicants if x != [[]] and x != []]
+    delList = []
+    implicants[i], delList = regroup(implicants[i-1], size)
+    for k in range(len(implicants[i-1])):
+        implicants[i-1][k] = [p for p in implicants[i-1][k] if p not in delList]
 
 for i in range(len(implicants)):
-    print(implicants[i])
+    implicants[i] = [x for x in implicants[i] if x != []]
+
+implicants = [x for x in implicants if x != []]
+
+for i in range(len(implicants)):
+     print(implicants[i])
 

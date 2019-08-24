@@ -6,6 +6,7 @@ def getSetBits(x):
     return bits
 
 def regroup(groups, size):
+    delList = []
     groupSize = len(groups)
     regroups = [[] for i in range(groupSize-1)]
     #all groups
@@ -23,8 +24,8 @@ def regroup(groups, size):
                     different += 0 if groups[i+1][k][l] == groups[i][j][l] else 1
                 if different < 2:
                     regroups[i].append(binString)
-        regroups[i] = list(dict.fromkeys(regroups[i]))
+                    delList += groups[i][j], groups[i+1][k]
+            regroups[i] = list(dict.fromkeys(regroups[i]))
     regroups = [x for x in regroups if x != []]
-    # set1 = set(tuple(x) for x in regroups)
-    # regroups = [list(t) for t in set(tuple(x) for x in regroups)]
-    return regroups
+
+    return regroups, list(set(delList))
