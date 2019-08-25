@@ -29,3 +29,18 @@ def regroup(groups, size):
     regroups = [x for x in regroups if x != []]
 
     return regroups, list(set(delList))
+
+#only formats prime implicant chart correctly for functions of <7 variables
+def printPIchart(size, minTerms, primeImplicants, piChart):
+    for i in range(size):
+        print(' ', end='')
+    print('[', end='')
+    for i in minTerms:
+        if i > 9:
+            print(str(i) + ",", end='')
+        else:
+            print(str(i) + ', ', end='')
+    print(']')
+
+    for i in range(len(piChart)):
+        print(primeImplicants[i] + str(piChart[i]))

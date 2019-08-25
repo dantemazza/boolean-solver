@@ -41,9 +41,13 @@ if dontCare:
         termTypes[dcTerms[i]] = False
 
 # associating the amount of set bits with a list index to facilitate implicant grouping
+minBin = []
 groups = [[] for i in range(size+1)]
 for i in range(len(terms)):
       groups[getSetBits(terms[i])].append(str(bin(terms[i]))[2:].zfill(size))
+      if termTypes[terms[i]]:
+        minBin.append(str(bin(terms[i]))[2:].zfill(size))
+
 
 # for i in range(len(groups)):
 #     print(groups[i])
@@ -65,7 +69,27 @@ for i in range(len(implicants)):
     implicants[i] = [x for x in implicants[i] if x != []]
 
 implicants = [x for x in implicants if x != []]
+primeImplicants = []
 
 for i in range(len(implicants)):
-     print(implicants[i])
+    for j in range(len(implicants[i])):
+        primeImplicants += implicants[i][j]
+
+print(primeImplicants)
+print(minBin)
+
+piChart = [[0 for i in range(len(minBin))] for j in range(len(primeImplicants))]
+
+#assembing the prime implicant chart
+for i in range(len(primeImplicants)):
+    for j in range(len(minBin)):
+        match = True
+        for k in range(size):
+            if primeImplicants[i][k] != '-' and minBin[j][k] != primeImplicants[i][k]:
+                match = False
+                break
+        piChart[i][j] = 1 if match else 0
+printPIchart(size, minTerms, primeImplicants, piChart)
+
+
 
