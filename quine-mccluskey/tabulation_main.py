@@ -2,6 +2,7 @@ from functions import *
 
 function = open("test_cases/test_case1.txt").readlines()
 
+expressionTerms = []
 size = int(function[0])
 minTerms = []
 dontCare = len(function) > 2
@@ -91,5 +92,40 @@ for i in range(len(primeImplicants)):
         piChart[i][j] = 1 if match else 0
 printPIchart(size, minTerms, primeImplicants, piChart)
 
+EPIs = []
 
+#locating essential prime implicants
+for i in range(len(minBin)):
+    sum = 0
+    currImplicant = ""
+    index = 0
+    for j in range(len(primeImplicants)):
+        if piChart[j][i] == 1:
+            sum += 1
+            currImplicant = primeImplicants[j]
+            index = j
+        if sum > 1:
+            currImplicant = ""
+            break;
+    if currImplicant:
+        EPIs.append(currImplicant)
 
+print(primeImplicants)
+print(EPIs)
+
+expressionTerms.extend(EPIs)
+#removing the essential prime implicants and corresponding columns from the PIchart in preperation for Petrick's Method
+for i in range(len(primeImplicants)-1,-1,-1):
+    if not primeImplicants[i] in EPIs:
+        continue
+    for j in range(len(minTerms)-1, -1, -1):
+        if piChart[i][j] == 1:
+            minTerms.pop(j)
+            for k in piChart:
+                del k[j]
+
+    piChart.pop(i)
+
+primeImplicants = [x for x in primeImplicants if x not in EPIs]
+
+printPIchart(size, minTerms, primeImplicants, piChart)
