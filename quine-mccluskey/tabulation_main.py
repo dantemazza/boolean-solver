@@ -1,6 +1,6 @@
 from functions import *
-
-function = open("test_cases/test_case1.txt").readlines()
+import sys
+function = open("test_cases/test_case3.txt").readlines()
 
 expressionTerms = []
 size = int(function[0])
@@ -76,8 +76,8 @@ for i in range(len(implicants)):
     for j in range(len(implicants[i])):
         primeImplicants += implicants[i][j]
 
-print(primeImplicants)
-print(minBin)
+# print(primeImplicants)
+# print(minBin)
 
 piChart = [[0 for i in range(len(minBin))] for j in range(len(primeImplicants))]
 
@@ -90,6 +90,8 @@ for i in range(len(primeImplicants)):
                 match = False
                 break
         piChart[i][j] = 1 if match else 0
+
+print("Prime implicant chart:")
 printPIchart(size, minTerms, primeImplicants, piChart)
 
 EPIs = []
@@ -110,8 +112,8 @@ for i in range(len(minBin)):
     if currImplicant:
         EPIs.append(currImplicant)
 
-print(primeImplicants)
-print(EPIs)
+# print(primeImplicants)
+# print(EPIs)
 
 expressionTerms.extend(EPIs)
 #removing the essential prime implicants and corresponding columns from the PIchart in preperation for Petrick's Method
@@ -128,4 +130,44 @@ for i in range(len(primeImplicants)-1,-1,-1):
 
 primeImplicants = [x for x in primeImplicants if x not in EPIs]
 
+print("Reduced prime implicant chart:")
 printPIchart(size, minTerms, primeImplicants, piChart)
+
+#to determine the expression with the least terms, we will map each implicant to its number of variables
+#and determine the least cost circuit once the function is condensed with Petrick's method
+
+PIterms = {}
+
+for i in range(len(primeImplicants)):
+    PIterms[i] = size - primeImplicants[i].count('-')
+
+#we begin Petrick's method by assembling a product of sums for uncovered minterms
+# using all non-essential prime implicants
+POS = []
+
+#the product of sums is assembled in a series of lists, with the first product having the terms in lists
+#themselves to be appended to using the foil method
+for i in range(len(minTerms)):
+    currSum = []
+    for j in range(len(primeImplicants)):
+        if piChart[j][i] == 1:
+            if i == 0:
+                term = []
+                term.append(j)
+                currSum.append(term)
+            else:
+                currSum.append(j)
+    POS.append(currSum)
+
+# print(POS)
+condensedPOS = simplify(distributePOS(POS))
+# print(condensedPOS)
+
+#determining least cost circuit using implicant mappings and a condensed product of sums
+leastCost = getLeastCost(condensedPOS, PIterms)
+
+expressionTerms.extend([primeImplicants[x] for x in leastCost])
+
+# print(expressionTerms)
+
+printExpression(size, expressionTerms)
