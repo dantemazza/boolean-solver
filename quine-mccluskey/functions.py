@@ -21,8 +21,8 @@ def regroup(groups, size):
                 different = 0
                 binString = ''
                 #all bits
-                print(groups[i + 1][k])
-                print(groups[i][j])
+                # print(groups[i + 1][k])
+                # print(groups[i][j])
                 for l in range(size):
                     binString += groups[i][j][l] if groups[i+1][k][l] == groups[i][j][l] else '-'
                     different += 0 if groups[i+1][k][l] == groups[i][j][l] else 1
