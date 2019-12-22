@@ -1,5 +1,5 @@
 import sys
-
+DEBUG=False
 def getSetBits(x):
     bits = 0
     while x:
@@ -54,7 +54,8 @@ def distributePOS(POS):
     SOP = POS[0]
     for i in range(len(POS)-1):
         SOP = foil(SOP, POS[i+1])
-
+    if DEBUG:
+        print('SOP in distributePOS',SOP)
     return [list(t) for t in set(tuple(x) for x in SOP)]
 
 #foil method designed for brute force expansion of POS. t1 is a list of lists of the initial terms
@@ -64,34 +65,51 @@ def foil(t1, t2):
     a = 0
     for i in range(len(t1)):
         for j in range(len(t2)):
-            # print(t1[i])
+            if DEBUG:
+                print('t1[i]_68',t1[i])
             term.append(t1[i].copy())
+            if DEBUG:
+                print('term_72',term)
             if t2[j] not in term[a]:
                 term[a].append(t2[j])
+            if DEBUG:
+                print('term_76',term)
             a += 1
     return term
 
 def simplify(SOP):
     SOPsets = [set(i) for i in SOP]
     result = []
+    if DEBUG:
+        print('SOPsets in simplify_77',SOPsets)
     for i in range(len(SOPsets)):
         for j in range(i+1, len(SOPsets)):
             if SOPsets[i] is not None and SOPsets[j] is not None:
+                # Loop through each SOP, mark all bigger SOP as None
                 if SOPsets[i].issuperset(SOPsets[j]):
                     SOPsets[i] = None
                 elif SOPsets[i].issubset(SOPsets[j]):
                     SOPsets[j] = None
+    if DEBUG:
+        print('SOPsets in simplify_85',SOPsets)
     res = [list(x) for x in SOPsets if x is not None]
+    if DEBUG:
+        print('res in simplify',res)
     return res
 
 def getLeastCost(POS, PIterms):
     leastCost = []
     lowest = sys.maxsize
+    if DEBUG:
+        print('POS in getLeastCost_96',POS)
     for i in range(len(POS)):
         currLength = 0
         for j in range(len(POS[i])):
             currLength += PIterms[POS[i][j]]
-        leastCost = POS[i] if currLength < lowest else leastCost
+        if currLength < lowest:
+            leastCost= POS[i]
+            lowest=currLength
+        # leastCost = POS[i] if currLength < lowest else leastCost
     return leastCost
 
 #prints the resulting expression based on implicants
@@ -204,8 +222,8 @@ def execute(function, size):
                     break
             piChart[i][j] = 1 if match else 0
 
-    print("Prime implicant chart:")
-    printPIchart(size, minTerms, primeImplicants, piChart)
+    # print("Prime implicant chart:")
+    # printPIchart(size, minTerms, primeImplicants, piChart)
 
     EPIs = []
 
@@ -230,23 +248,33 @@ def execute(function, size):
     # print(EPIs)
 
     expressionTerms.extend(EPIs)
+    if DEBUG:
+        print('minTerms 235',minTerms)
+        print('primeImplicants 236',primeImplicants)
+        print('EPI 237',EPIs)
+        print('piChart 238',piChart)
     # removing the essential prime implicants and corresponding columns from the PIchart in preperation for Petrick's Method
     for i in range(len(primeImplicants) - 1, -1, -1):
         if not primeImplicants[i] in EPIs:
             continue
         for j in range(len(minTerms) - 1, -1, -1):
+            if DEBUG:
+                print('ij_244 ',i,j)
             if piChart[i][j] == 1:
+                if DEBUG:
+                    print('here',i,j)
                 minTerms.pop(j)
                 for k in piChart:
                     del k[j]
-
         piChart.pop(i)
+        if DEBUG:
+            print('piChart',piChart)
+            print('mt',minTerms)
 
     primeImplicants = [x for x in primeImplicants if x not in EPIs]
-
-    print("Reduced prime implicant chart:")
-    printPIchart(size, minTerms, primeImplicants, piChart)
-
+    if DEBUG:
+        print("Reduced prime implicant chart:")
+        printPIchart(size, minTerms, primeImplicants, piChart)
     # to determine the expression with the least terms, we will map each implicant to its number of variables
     # and determine the least cost circuit once the function is condensed with Petrick's method
 
@@ -272,15 +300,34 @@ def execute(function, size):
                 else:
                     currSum.append(j)
         POS.append(currSum)
+    if DEBUG:
+        # print(POS)
+        print('POS 286',POS)  
 
-    # print(POS)
-
-    condensedPOS = simplify(distributePOS(POS)) if len(POS) > 1 else POS
-    # print(condensedPOS)
-
+    # Distributing POS and condense
+    # Bug here, POS and the return of simplify do not have the same structure, but got returned
+    # to condensedPOS
+    # condensedPOS = simplify(distributePOS(POS)) if len(POS) > 1 else POS
+    # Fixing bug
+    if len(POS) > 1:
+        condensedPOS=simplify(distributePOS(POS))
+    elif len(POS)==1:
+        # if only 1 item in POS
+        # So each P is enclosed in a list
+        # Extract them 
+        condensedPOS=[x[0] for x in POS]
+    else:
+        # no item
+        # keep condesnsedPOS empty
+        condensedPOS=[]
+ 
+    if DEBUG:
+        # print(condensedPOS)
+        print('condensedPOS 298',condensedPOS)
+        print('PIterms 301',PIterms)
     # determining least cost circuit using implicant mappings and a condensed product of sums
     leastCost = getLeastCost(condensedPOS, PIterms)
-    print(expressionTerms)
+    # print(expressionTerms)
     expressionTerms.extend([primeImplicants[x] for x in leastCost])
 
     # print(expressionTerms)
