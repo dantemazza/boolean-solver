@@ -12,7 +12,7 @@ def regroup(groups, size):
     groupSize = len(groups)
     regroups = [[] for i in range(groupSize-1)]
     #all groups
-    #print(groups)
+
     for i in range(groupSize - 1):
         #all strings in preceding group
         for j in range(len(groups[i])):
@@ -21,8 +21,6 @@ def regroup(groups, size):
                 different = 0
                 binString = ''
                 #all bits
-                # print(groups[i + 1][k])
-                # print(groups[i][j])
                 for l in range(size):
                     binString += groups[i][j][l] if groups[i+1][k][l] == groups[i][j][l] else '-'
                     different += 0 if groups[i+1][k][l] == groups[i][j][l] else 1
@@ -30,7 +28,7 @@ def regroup(groups, size):
                     regroups[i].append(binString)
                     delList += groups[i][j], groups[i+1][k]
             regroups[i] = list(dict.fromkeys(regroups[i]))
-    regroups = [x for x in regroups if x != []]
+    regroups = [x for x in regroups if x]
 
     return regroups, list(set(delList))
 
@@ -76,22 +74,22 @@ def simplify(SOP):
     result = []
     for i in range(len(SOPsets)):
         for j in range(i+1, len(SOPsets)):
-            if SOPsets[i] is not None and SOPsets[j] is not None:
+            if SOPsets[i] and SOPsets[j]:
                 if SOPsets[i].issuperset(SOPsets[j]):
                     SOPsets[i] = None
                 elif SOPsets[i].issubset(SOPsets[j]):
                     SOPsets[j] = None
-    res = [list(x) for x in SOPsets if x is not None]
+    res = [list(x) for x in SOPsets if x]
     return res
 
 def getLeastCost(POS, PIterms):
     leastCost = []
     lowest = sys.maxsize
-    for i in range(len(POS)):
+    for i in POS:
         currLength = 0
-        for j in range(len(POS[i])):
-            currLength += PIterms[POS[i][j]]
-        leastCost = POS[i] if currLength < lowest else leastCost
+        for j in i:
+            currLength += PIterms[j]
+        leastCost = i if currLength < lowest else leastCost
     return leastCost
 
 #prints the resulting expression based on implicants
@@ -99,36 +97,35 @@ def printExpression(size, implicants):
     if implicants == ['----']:
         print("TRUE")
         return
-    elif implicants == []:
+    elif not implicants:
         print("FALSE")
         return
-    for i in range(len(implicants)):
+    for i, implicant in enumerate(implicants):
         char = 'a'
         for j in range(size):
-            if implicants[i][j] == '-':
+            if implicant[j] == '-':
                 char = chr(ord(char) + 1)
                 continue
-            print(char, end = '')
-            if implicants[i][j] == '0':
-                print("'", end = '')
+            print(char, end='')
+            if not int(implicant[j]):
+                print("'", end='')
             char = chr(ord(char) + 1)
-        if i != len(implicants) - 1:
-            print(" + ", end = '')
+        if implicant != implicants[-1]:
+            print(" + ", end='')
 
 def execute(function, size):
     if len(function[1]) == 3:
         return []
     minTerms = []
     dontCare = len(function) > 2
-    safety = 1 if dontCare else 0
+
     minTrueMaxFalse = function[1][0] == "m"
-    # terms = function[1][2:(len(function[1])-2)].split(',')
-    terms = [int(n) for n in function[1][2:(len(function[1]) - 1 - safety)].split(',')]
+
+    terms = [int(n) for n in function[1][2:(len(function[1]) - 1 - dontCare)].split(',')]
     if dontCare:
         dcTerms = [int(n) for n in function[2][2:(len(function[2]) - 1)].split(',')]
 
-    # print(terms)
-    # print(dcTerms)
+
     expressionTerms = []
     minTerms = []
 
@@ -139,34 +136,28 @@ def execute(function, size):
     else:
         minTerms = terms
 
-    # for i in range(len(minTerms)):
-    #     print(minTerms[i])
-    if dontCare:
-        terms = minTerms + dcTerms
-    else:
-        terms = minTerms
+    terms = minTerms + dcTerms if dontCare else minTerms
+
     if len(terms) == 2**size:
         return ['----']
     # mapping minterms and don't cares to respective boolean value to keep record of the term type
     termTypes = {}
-    for i in range(len(minTerms)):
-        termTypes[minTerms[i]] = True
+    for i in minTerms:
+        termTypes[i] = True
 
     if dontCare:
-        for i in range(len(dcTerms)):
-            termTypes[dcTerms[i]] = False
+        for i in dcTerms:
+            termTypes[i] = False
 
     # associating the amount of set bits with a list index to facilitate implicant grouping
     minBin = []
     groups = [[] for i in range(size + 1)]
-    for i in range(len(terms)):
-        groups[getSetBits(terms[i])].append(str(bin(terms[i]))[2:].zfill(size))
-        if termTypes[terms[i]]:
-            minBin.append(str(bin(terms[i]))[2:].zfill(size))
+    for term in terms:
+        groups[getSetBits(term)].append(str(bin(term))[2:].zfill(size))
+        if termTypes[term]:
+            minBin.append(str(bin(term))[2:].zfill(size))
 
-    # for i in range(len(groups)):
-    #     print(groups[i])
-    groups = [x for x in groups if x != []]
+    groups = [x for x in groups if x]
 
     implicants = [[[]] for i in range(size)]
 
@@ -185,24 +176,22 @@ def execute(function, size):
     implicants = [x for x in implicants if x != []]
     primeImplicants = []
 
-    for i in range(len(implicants)):
-        for j in range(len(implicants[i])):
-            primeImplicants += implicants[i][j]
+    for i in implicants:
+        for j in i:
+            primeImplicants += j
 
-    # print(primeImplicants)
-    # print(minBin)
 
     piChart = [[0 for i in range(len(minBin))] for j in range(len(primeImplicants))]
 
     # assembing the prime implicant chart
-    for i in range(len(primeImplicants)):
-        for j in range(len(minBin)):
+    for i, PI in enumerate(primeImplicants):
+        for j, BIN in enumerate(minBin):
             match = True
-            for k in range(size):
-                if primeImplicants[i][k] != '-' and minBin[j][k] != primeImplicants[i][k]:
+            for PI2, BIN2 in zip(PI, BIN):
+                if PI2 != '-' and BIN2 != PI2:
                     match = False
                     break
-            piChart[i][j] = 1 if match else 0
+            piChart[i][j] = int(match)
 
     print("Prime implicant chart:")
     printPIchart(size, minTerms, primeImplicants, piChart)
@@ -214,11 +203,10 @@ def execute(function, size):
         sum = 0
         currImplicant = ""
         index = 0
-        for j in range(len(primeImplicants)):
-            if piChart[j][i] == 1:
+        for j, PI in enumerate(primeImplicants):
+            if piChart[j][i]:
                 sum += 1
-                currImplicant = primeImplicants[j]
-                index = j
+                currImplicant = PI
             if sum > 1:
                 currImplicant = ""
                 break;
@@ -226,8 +214,6 @@ def execute(function, size):
             EPIs.append(currImplicant)
 
     EPIs = set(list(EPIs))
-    # print(primeImplicants)
-    # print(EPIs)
 
     expressionTerms.extend(EPIs)
     # removing the essential prime implicants and corresponding columns from the PIchart in preperation for Petrick's Method
@@ -235,7 +221,7 @@ def execute(function, size):
         if not primeImplicants[i] in EPIs:
             continue
         for j in range(len(minTerms) - 1, -1, -1):
-            if piChart[i][j] == 1:
+            if piChart[i][j]:
                 minTerms.pop(j)
                 for k in piChart:
                     del k[j]
@@ -252,8 +238,8 @@ def execute(function, size):
 
     PIterms = {}
 
-    for i in range(len(primeImplicants)):
-        PIterms[i] = size - primeImplicants[i].count('-')
+    for i, PI in enumerate(primeImplicants):
+        PIterms[i] = size - PI.count('-')
 
     # we begin Petrick's method by assembling a product of sums for uncovered minterms
     # using all non-essential prime implicants
@@ -280,10 +266,8 @@ def execute(function, size):
 
     # determining least cost circuit using implicant mappings and a condensed product of sums
     leastCost = getLeastCost(condensedPOS, PIterms)
-    print(expressionTerms)
     expressionTerms.extend([primeImplicants[x] for x in leastCost])
-
-    # print(expressionTerms)
+    print(expressionTerms)
 
     return expressionTerms
 
