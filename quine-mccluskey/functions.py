@@ -38,14 +38,12 @@ def printPIchart(size, minTerms, primeImplicants, piChart):
         print(' ', end='')
     print('[', end='')
     for i in minTerms:
-        if i > 9:
-            print(str(i) + ",", end='')
-        else:
-            print(str(i) + ', ', end='')
+        comma = "" if i == minTerms[-1] else ("," if i > 9 else ", ")
+        print(f"{str(i)}{comma}", end='')
     print(']')
 
-    for i in range(len(piChart)):
-        print(primeImplicants[i] + str(piChart[i]))
+    for i, boo in enumerate(piChart):
+        print(primeImplicants[i] + str(boo))
 
 #iteratively using foil to distribute the product of sums into a sum of products
 def distributePOS(POS):
