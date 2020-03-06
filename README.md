@@ -1,4 +1,4 @@
-# BooleanPlus
+# BooleanSolver
 A python implementation of the [Quine-McCluskey algorithm](https://en.wikipedia.org/wiki/Quine%E2%80%93McCluskey_algorithm) and 
 [Petrick's method](https://en.wikipedia.org/wiki/Petrick%27s_method), extrapolated from the content of [ECE124](https://ece.uwaterloo.ca/~cgebotys/NEW/124-frameset.htm).
 
