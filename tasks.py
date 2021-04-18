@@ -1,6 +1,6 @@
 from invoke import task
 from quine_mccluskey.__main__ import execute
-from quine_mccluskey.output import printExpression
+from quine_mccluskey.output import generateExpression
 import time
 
 @task
@@ -11,5 +11,6 @@ def solve(c, test_case_path):
 
     start = time.time()
     expressionTerms = execute(function, size)
-    printExpression(size, expressionTerms)
+    exp = generateExpression(size, expressionTerms)
+    print(exp)
     print(f"calculation took {time.time()-start} seconds")

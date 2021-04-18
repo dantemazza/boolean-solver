@@ -69,7 +69,6 @@ def foil(t1, t2):
 
 def simplify(SOP):
     SOPsets = [set(i) for i in SOP]
-    result = []
     for i in range(len(SOPsets)):
         for j in range(i+1, len(SOPsets)):
             if SOPsets[i] and SOPsets[j]:
