@@ -1,5 +1,26 @@
 from datetime import datetime
 
+solution_html = """
+  <h1>
+    Prime Implicant Chart
+  </h1>
+  <p>
+    {}
+  </p>
+  <h1>
+    Reduced Prime Implicant Chart
+  </h1>
+  <p>
+    {}
+  </p>
+  <h1>
+    Final Expression
+  </h1>
+  <h5>
+    <b>{}</b>
+  </h5>
+  """
+
 def history():
     history = [
         {

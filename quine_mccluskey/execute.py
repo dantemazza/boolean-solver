@@ -1,10 +1,13 @@
 from quine_mccluskey.logic import *
+from quine_mccluskey.output import PrimeImplicantChart
+import copy
+
 
 def execute(function):
     size = int(function[0])
     function[1] = function[1].rstrip('\n')
     if len(function[1]) == 3:
-        return []
+        return [], [], []
     minTerms = []
     dontCare = len(function) > 2
 
@@ -27,7 +30,7 @@ def execute(function):
     terms = minTerms + dcTerms if dontCare else minTerms
 
     if len(terms) == 2**size:
-        return ['----']
+        return ['----'], [], []
     # mapping minterms and don't cares to respective boolean value to keep record of the term type
     termTypes = {}
     for i in minTerms:
@@ -82,7 +85,8 @@ def execute(function):
             piChart[i][j] = int(match)
 
     print("Prime implicant chart:")
-    printPIchart(size, minTerms, primeImplicants, piChart)
+    PC = PrimeImplicantChart(size, copy.deepcopy(minTerms), copy.deepcopy(primeImplicants), copy.deepcopy(piChart))
+    PC.printPIchart()
 
     EPIs = []
 
@@ -119,8 +123,8 @@ def execute(function):
     primeImplicants = [x for x in primeImplicants if x not in EPIs]
 
     print("Reduced prime implicant chart:")
-    printPIchart(size, minTerms, primeImplicants, piChart)
-
+    RPC = PrimeImplicantChart(size, minTerms, primeImplicants, piChart)
+    RPC.printPIchart()
     # to determine the expression with the least terms, we will map each implicant to its number of variables
     # and determine the least cost circuit once the function is condensed with Petrick's method
 
@@ -157,4 +161,4 @@ def execute(function):
     expressionTerms.extend([primeImplicants[x] for x in leastCost])
     print(expressionTerms)
 
-    return expressionTerms
+    return expressionTerms, PC, RPC

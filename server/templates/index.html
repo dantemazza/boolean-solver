@@ -18,7 +18,6 @@
     </div>
     <p><input type="submit" class="btn btn-primary" value="Solve"></p>
   </form>
-  <p>
-    {{expression}}
-  </p>
+  {{solution|safe}}
+  <br><br><br>
 {% endblock %}

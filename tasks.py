@@ -1,5 +1,5 @@
 from invoke import task
-from quine_mccluskey.__main__ import execute
+from quine_mccluskey.execute import execute
 from quine_mccluskey.output import generateExpression
 import time
 
@@ -14,9 +14,9 @@ def _solve(test_case_path):
         size = int(function[0])
 
     start = time.time()
-    expressionTerms = execute(function)
+    expressionTerms, PC, RPC = execute(function)
     exp = generateExpression(size, expressionTerms)
     print(exp)
     print(f"calculation took {time.time()-start} seconds")
 
-# _solve('test_cases/test_case4.bool')
+_solve('test_cases/test_case4.bool')

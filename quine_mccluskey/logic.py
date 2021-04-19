@@ -33,17 +33,7 @@ def regroup(groups, size):
     return regroups, list(set(delList))
 
 #only formats prime implicant chart correctly for functions of <7 variables
-def printPIchart(size, minTerms, primeImplicants, piChart):
-    for i in range(size):
-        print(' ', end='')
-    print('[', end='')
-    for i in minTerms:
-        comma = "" if i == minTerms[-1] else ("," if i > 9 else ", ")
-        print(f"{str(i)}{comma}", end='')
-    print(']')
 
-    for i, boo in enumerate(piChart):
-        print(primeImplicants[i] + str(boo))
 
 #iteratively using foil to distribute the product of sums into a sum of products
 def distributePOS(POS):
