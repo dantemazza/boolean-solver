@@ -27,6 +27,17 @@ def check_null(s, form):
         raise ValidationError('Integer value from 1-6 required')
 
 
+def validate_range(function):
+    size = int(function[0])
+    dontCare = len(function) > 2
+    terms = [int(n) for n in function[1][2:(len(function[1]) - 1)].split(',')]
+    dcTerms = [int(n) for n in function[2][2:(len(function[2]) - 1)].split(',')] if dontCare else []
+    for term in terms + dcTerms:
+        if term >= 2**size:
+            return False
+    return True
+
+
 class TermForm(Form):
     input_size = IntegerField("Number of Variables", [check_null])
     minmaxterms = StringField("Minterms", [check_empty, validate_inputs])

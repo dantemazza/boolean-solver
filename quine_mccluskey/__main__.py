@@ -1,14 +1,15 @@
 from quine_mccluskey.logic import *
 
-def execute(function, size):
+def execute(function):
+    size = int(function[0])
+    function[1] = function[1].rstrip('\n')
     if len(function[1]) == 3:
         return []
     minTerms = []
     dontCare = len(function) > 2
 
     minTrueMaxFalse = function[1][0] == "m"
-
-    terms = [int(n) for n in function[1][2:(len(function[1]) - 1 - dontCare)].split(',')]
+    terms = [int(n) for n in function[1][2:(len(function[1]) - 1)].split(',')]
     if dontCare:
         dcTerms = [int(n) for n in function[2][2:(len(function[2]) - 1)].split(',')]
 
@@ -148,7 +149,7 @@ def execute(function, size):
 
     # print(POS)
 
-    condensedPOS = simplify(distributePOS(POS)) if len(POS) > 1 else POS
+    condensedPOS = simplify(distributePOS(POS)) if len(POS) >= 1 else POS
     # print(condensedPOS)
 
     # determining least cost circuit using implicant mappings and a condensed product of sums
