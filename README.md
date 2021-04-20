@@ -21,7 +21,11 @@ The case should be formatted as such:
 * The second line is the max/min expansion. It is important that you include brackets, no spaces, and seperate each value with a comma
 * The third line is dontcares, formatted in the same way as the second line. This is optional. 
 
-**Place your case in the test_cases directory and adjust the file name in tabulation_main.py accordingly. Run tabulation_main.py to execute the algorithm.**
+To run a test case, use the invoke task 
+
+```
+inv solve <test_case_path>
+```
 
 ## About 
 The program uses a prime implicant chart (as specified in the tabulation method) to locate all essential prime implicants. The remaining ones are covered using a Petrick's method expansion. Algebraic expressions are stored in list data structures as follows:
