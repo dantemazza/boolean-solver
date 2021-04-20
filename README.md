@@ -1,6 +1,15 @@
 # BooleanSolver
+![](images/flask_app.png)
+
 A python implementation of the [Quine-McCluskey algorithm](https://en.wikipedia.org/wiki/Quine%E2%80%93McCluskey_algorithm) and 
 [Petrick's method](https://en.wikipedia.org/wiki/Petrick%27s_method), inspired by the content of [ECE124](https://ece.uwaterloo.ca/~cgebotys/NEW/124-frameset.htm) and my own independent research.
+
+## Project Setup
+ ```
+ python3 -m venv venv
+ source venv/bin/activate
+ pip3 install -r requirements.txt
+ ```
 
 ## Running
 Here is a sample test case expressed as a minterm expansion:
@@ -26,6 +35,11 @@ To run a test case, use the invoke task
 ```
 inv solve <test_case_path>
 ```
+or use the flask app!
+```
+python3 -m flask run
+```
+and connect to http://localhost:5000
 
 ## About 
 The program uses a prime implicant chart (as specified in the tabulation method) to locate all essential prime implicants. The remaining ones are covered using a Petrick's method expansion. Algebraic expressions are stored in list data structures as follows:
