@@ -9,25 +9,13 @@
                   <b>{{entry.time_created}}</b>
               </h3>
               <h4>
-                  Your Minterms: {{entry.minterms}}
-              </h4>
-              <h4>
-                  Maxterms: {{entry.maxterms}}
-              </h4>
-               <h4>
-                 Don't-care terms: {{entry.dont_cares}}
+                  Function: {{entry.function}}
               </h4>
               <h4>
                   Prime Implicant Chart:
               </h4>
               <p>
-                  {{entry.pi_chart}}
-              </p>
-              <h4>
-                  Reduced Prime Implicant Chart:
-              </h4>
-              <p>
-                  {{entry.reduced_pi_chart}}
+                  {{entry.pi_chart|safe}}
               </p>
               <h3>Solution: <b>{{entry.solution}}</b></h3>
           </li>

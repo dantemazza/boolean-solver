@@ -19,7 +19,7 @@ def generateExpression(size, implicants):
             char = chr(ord(char) + 1)
         if implicant != implicants[-1]:
             res += " + "
-    return res
+    return f"{gen_f(size)} = {res}"
 
 
 class PrimeImplicantChart:
@@ -64,3 +64,11 @@ class PrimeImplicantChart:
             body.append(row_html)
         body = "".join(body)
         self.html = html.format(head, body)
+
+def gen_f(size):
+    var = 'a'
+    chars = []
+    for i in range(size):
+        chars.append(var)
+        var = chr(ord(var) + 1)
+    return f"f({','.join(chars)})"
