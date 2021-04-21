@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1 class="display-4"><b>Calculation History</b></h1>
+      <ul class="list-group">
+          {% for entry in history %}
+          <li class="list-group-item">
+              <h3>
+                  <b>{{entry.time_created}}</b>
+              </h3>
+              <h4>
+                  Function: {{entry.function}}
+              </h4>
+              <h4>
+                  Prime Implicant Chart:
+              </h4>
+              <p>
+                  {{entry.pi_chart|safe}}
+              </p>
+              <h3>Solution: <b>{{entry.solution}}</b></h3>
+          </li>
+          {% endfor %}
+      </ul>
+      <br><br>
+{% endblock %}
