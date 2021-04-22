@@ -37,7 +37,7 @@ inv solve <test_case_path>
 ```
 or use the flask app!
 ```
-python3 -m flask run
+python3 boolean_solver/__init__.py
 ```
 and connect to http://localhost:5000
 
